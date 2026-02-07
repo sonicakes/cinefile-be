@@ -1,0 +1,67 @@
+{
+  "kind": "collectionType",
+  "collectionName": "movies",
+  "info": {
+    "singularName": "movie",
+    "pluralName": "movies",
+    "displayName": "movie"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "date_reviewed": {
+      "type": "date"
+    },
+    "meta_title": {
+      "type": "string"
+    },
+    "body_blog": {
+      "type": "richtext"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "excerpt": {
+      "type": "text"
+    },
+    "director": {
+      "type": "string"
+    },
+    "watched": {
+      "type": "boolean"
+    },
+    "availability": {
+      "type": "component",
+      "component": "shared.availability",
+      "repeatable": true
+    },
+    "would_recommend": {
+      "type": "boolean"
+    },
+    "would_rewatch": {
+      "type": "boolean"
+    },
+    "review_provided": {
+      "type": "boolean"
+    },
+    "letterboxd_uri": {
+      "type": "string"
+    },
+    "image_description": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    },
+    "rating_metric": {
+      "type": "string"
+    }
+  }
+}
