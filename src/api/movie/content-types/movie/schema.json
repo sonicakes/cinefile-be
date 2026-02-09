@@ -37,11 +37,6 @@
     "watched": {
       "type": "boolean"
     },
-    "availability": {
-      "type": "component",
-      "component": "shared.availability",
-      "repeatable": true
-    },
     "would_recommend": {
       "type": "boolean"
     },
@@ -62,6 +57,32 @@
     },
     "rating_metric": {
       "type": "string"
+    },
+    "quote": {
+      "type": "string"
+    },
+    "run_time": {
+      "type": "string"
+    },
+    "genres": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::genre.genre"
+    },
+    "rating": {
+      "type": "integer",
+      "min": 1,
+      "max": 10
+    },
+    "img": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     }
   }
 }
