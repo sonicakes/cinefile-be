@@ -466,6 +466,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    availability: Schema.Attribute.Component<'shared.availability-item', true>;
     body_blog: Schema.Attribute.RichText;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -474,14 +475,15 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     director: Schema.Attribute.String;
     excerpt: Schema.Attribute.Text;
     genres: Schema.Attribute.Relation<'oneToMany', 'api::genre.genre'>;
-    image: Schema.Attribute.String;
     image_description: Schema.Attribute.String;
+    image_detail: Schema.Attribute.String;
     img: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     letterboxd_uri: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::movie.movie'> &
       Schema.Attribute.Private;
     meta_title: Schema.Attribute.String;
+    next_movie: Schema.Attribute.Component<'shared.next-movie', false>;
     publishedAt: Schema.Attribute.DateTime;
     quote: Schema.Attribute.String;
     rating: Schema.Attribute.Integer &

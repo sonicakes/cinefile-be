@@ -1,31 +1,34 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
-export interface SharedAvailability extends Struct.ComponentSchema {
-  collectionName: 'components_shared_availabilities';
+export interface SharedAvailabilityItem extends Struct.ComponentSchema {
+  collectionName: 'components_shared_availability_items';
   info: {
-    displayName: 'availability';
+    displayName: 'Availability Item';
   };
   attributes: {
     location: Schema.Attribute.String;
-    medium: Schema.Attribute.Enumeration<
-      [
-        'YouTube',
-        'Shudder',
-        'Home Collection',
-        'Mubi',
-        'Tubi',
-        'SBS',
-        'Cinema',
-        'Plex',
-      ]
-    >;
+    medium: Schema.Attribute.String;
+  };
+}
+
+export interface SharedNextMovie extends Struct.ComponentSchema {
+  collectionName: 'components_shared_next_movies';
+  info: {
+    displayName: 'next_movie';
+  };
+  attributes: {
+    movie: Schema.Attribute.Relation<'oneToOne', 'api::movie.movie'>;
+    reason: Schema.Attribute.Text;
+    thumbnail_url: Schema.Attribute.String;
+    title: Schema.Attribute.String;
   };
 }
 
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
-      'shared.availability': SharedAvailability;
+      'shared.availability-item': SharedAvailabilityItem;
+      'shared.next-movie': SharedNextMovie;
     }
   }
 }

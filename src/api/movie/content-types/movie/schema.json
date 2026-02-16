@@ -52,7 +52,7 @@
     "image_description": {
       "type": "string"
     },
-    "image": {
+    "image_detail": {
       "type": "string"
     },
     "rating_metric": {
@@ -86,6 +86,16 @@
     },
     "year": {
       "type": "string"
+    },
+    "availability": {
+      "type": "component",
+      "component": "shared.availability-item",
+      "repeatable": true
+    },
+    "next_movie": {
+      "type": "component",
+      "component": "shared.next-movie",
+      "repeatable": false
     }
   }
 }
