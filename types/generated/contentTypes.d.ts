@@ -503,6 +503,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     watched: Schema.Attribute.Boolean;
     would_recommend: Schema.Attribute.Boolean;
     would_rewatch: Schema.Attribute.Boolean;
+    year: Schema.Attribute.String;
   };
 }
 

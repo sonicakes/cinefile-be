@@ -83,6 +83,9 @@
         "videos",
         "audios"
       ]
+    },
+    "year": {
+      "type": "string"
     }
   }
 }
