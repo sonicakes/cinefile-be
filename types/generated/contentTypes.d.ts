@@ -472,6 +472,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     date_reviewed: Schema.Attribute.Date;
+    date_watched: Schema.Attribute.Date;
     director: Schema.Attribute.String;
     excerpt: Schema.Attribute.Text;
     genres: Schema.Attribute.Relation<'oneToMany', 'api::genre.genre'>;
@@ -498,11 +499,11 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     review_provided: Schema.Attribute.Boolean;
     run_time: Schema.Attribute.String;
     slug: Schema.Attribute.UID<'title'>;
+    spotify_episodes: Schema.Attribute.Component<'shared.spotify-eps', true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    watched: Schema.Attribute.Boolean;
     would_recommend: Schema.Attribute.Boolean;
     would_rewatch: Schema.Attribute.Boolean;
     year: Schema.Attribute.String;

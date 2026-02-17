@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_spotify_eps",
+  "info": {
+    "displayName": "spotify_eps"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "podcastName": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

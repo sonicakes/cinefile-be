@@ -34,9 +34,6 @@
     "director": {
       "type": "string"
     },
-    "watched": {
-      "type": "boolean"
-    },
     "would_recommend": {
       "type": "boolean"
     },
@@ -96,6 +93,14 @@
       "type": "component",
       "component": "shared.next-movie",
       "repeatable": false
+    },
+    "spotify_episodes": {
+      "type": "component",
+      "component": "shared.spotify-eps",
+      "repeatable": true
+    },
+    "date_watched": {
+      "type": "date"
     }
   }
 }
