@@ -7,7 +7,20 @@ export interface SharedAvailabilityItem extends Struct.ComponentSchema {
   };
   attributes: {
     location: Schema.Attribute.String;
-    medium: Schema.Attribute.String;
+    source: Schema.Attribute.Enumeration<
+      [
+        'YouTube',
+        'Plane',
+        'Plex',
+        'Mubi',
+        'Shudder',
+        'SBS',
+        'Tubi',
+        'DVD',
+        'Home',
+        'TV',
+      ]
+    >;
   };
 }
 
@@ -18,9 +31,6 @@ export interface SharedNextMovie extends Struct.ComponentSchema {
   };
   attributes: {
     movie: Schema.Attribute.Relation<'oneToOne', 'api::movie.movie'>;
-    reason: Schema.Attribute.Text;
-    thumbnail_url: Schema.Attribute.String;
-    title: Schema.Attribute.String;
   };
 }
 

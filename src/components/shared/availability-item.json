@@ -5,11 +5,23 @@
   },
   "options": {},
   "attributes": {
-    "medium": {
-      "type": "string"
-    },
     "location": {
       "type": "string"
+    },
+    "source": {
+      "type": "enumeration",
+      "enum": [
+        "YouTube",
+        "Plane",
+        "Plex",
+        "Mubi",
+        "Shudder",
+        "SBS",
+        "Tubi",
+        "DVD",
+        "Home",
+        "TV"
+      ]
     }
   },
   "config": {}

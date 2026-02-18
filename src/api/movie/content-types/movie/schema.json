@@ -24,10 +24,6 @@
     "body_blog": {
       "type": "richtext"
     },
-    "slug": {
-      "type": "uid",
-      "targetField": "title"
-    },
     "excerpt": {
       "type": "text"
     },
@@ -47,9 +43,6 @@
       "type": "string"
     },
     "image_description": {
-      "type": "string"
-    },
-    "image_detail": {
       "type": "string"
     },
     "rating_metric": {
