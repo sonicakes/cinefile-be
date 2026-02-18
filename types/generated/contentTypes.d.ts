@@ -477,7 +477,6 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     excerpt: Schema.Attribute.Text;
     genres: Schema.Attribute.Relation<'oneToMany', 'api::genre.genre'>;
     image_description: Schema.Attribute.String;
-    image_detail: Schema.Attribute.String;
     img: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     letterboxd_uri: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -498,7 +497,6 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     rating_metric: Schema.Attribute.String;
     review_provided: Schema.Attribute.Boolean;
     run_time: Schema.Attribute.String;
-    slug: Schema.Attribute.UID<'title'>;
     spotify_episodes: Schema.Attribute.Component<'shared.spotify-eps', true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;

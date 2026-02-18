@@ -18,9 +18,6 @@ export interface SharedNextMovie extends Struct.ComponentSchema {
   };
   attributes: {
     movie: Schema.Attribute.Relation<'oneToOne', 'api::movie.movie'>;
-    reason: Schema.Attribute.Text;
-    thumbnail_url: Schema.Attribute.String;
-    title: Schema.Attribute.String;
   };
 }
 
