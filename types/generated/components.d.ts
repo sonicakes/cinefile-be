@@ -7,7 +7,20 @@ export interface SharedAvailabilityItem extends Struct.ComponentSchema {
   };
   attributes: {
     location: Schema.Attribute.String;
-    medium: Schema.Attribute.String;
+    source: Schema.Attribute.Enumeration<
+      [
+        'YouTube',
+        'Plane',
+        'Plex',
+        'Mubi',
+        'Shudder',
+        'SBS',
+        'Tubi',
+        'DVD',
+        'Home',
+        'TV',
+      ]
+    >;
   };
 }
 
