@@ -9,13 +9,13 @@
  */
 
 import { execSync } from "child_process";
-import { mkdirSync, writeFileSync, rmSync, existsSync } from "fs";
+import { mkdirSync, writeFileSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const STRAPI_API_URL = "http://localhost:1337/api";
+const STRAPI_API_URL = "http://127.0.0.1:1337/api";
 const CONTENT_REPO_URL = "https://github.com/sonicakes/cinefile-content.git";
 const CLONE_DIR = join(__dirname, "../.content-backup-tmp");
 
