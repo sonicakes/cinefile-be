@@ -16,10 +16,10 @@
     "backup": "node scripts/backup-posts.mjs"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "5.35.0",
-    "@strapi/plugin-users-permissions": "5.35.0",
+    "@strapi/plugin-cloud": "5.38.0",
+    "@strapi/plugin-users-permissions": "5.38.0",
     "@strapi/provider-upload-cloudinary": "^5.35.0",
-    "@strapi/strapi": "5.35.0",
+    "@strapi/strapi": "5.38.0",
     "pg": "^8.8.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
