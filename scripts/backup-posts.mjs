@@ -79,16 +79,30 @@ function toMarkdown(movie) {
 }
 
 // ---------------------------------------------------------------------------
-// Derive a safe filename from the movie title
+// Derive a stable filename from documentId so renames don't create duplicates
 // ---------------------------------------------------------------------------
-function toFilename(title) {
-  return (
-    title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, "-") + ".md"
-  );
+function toFilename(movie) {
+  return `${movie.documentId}.md`;
+}
+
+// ---------------------------------------------------------------------------
+// Generate a README index of all posts
+// ---------------------------------------------------------------------------
+function toReadme(movies, timestamp) {
+  const rows = movies
+    .slice()
+    .sort((a, b) => a.title.localeCompare(b.title))
+    .map((m) => `| ${m.title} | ${m.director} | ${m.year} | [${m.documentId}.md](posts/${m.documentId}.md) |`)
+    .join("\n");
+
+  return `# Cinefile Content Backup
+
+Last updated: ${timestamp} — ${movies.length} posts
+
+| Title | Director | Year | File |
+|---|---|---|---|
+${rows}
+`;
 }
 
 // ---------------------------------------------------------------------------
@@ -120,14 +134,17 @@ async function main() {
   mkdirSync(postsDir, { recursive: true });
 
   for (const movie of movies) {
-    const filename = toFilename(movie.title);
+    const filename = toFilename(movie);
     const content = toMarkdown(movie);
     writeFileSync(join(postsDir, filename), content, "utf-8");
     console.log(`  Written: posts/${filename}`);
   }
 
-  // 4. Commit and push
+  // 4. Write README index
   const timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
+  writeFileSync(join(CLONE_DIR, "README.md"), toReadme(movies, timestamp), "utf-8");
+
+  // 5. Commit and push
   git("add .");
 
   // Check if there's anything to commit
