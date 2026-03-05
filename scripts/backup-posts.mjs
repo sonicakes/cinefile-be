@@ -3,21 +3,64 @@
  * backup-posts.mjs
  *
  * Fetches all movie posts from Strapi and backs them up as Markdown files
- * with YAML frontmatter to the cinefile-content GitHub repo.
+ * to the cinefile-content GitHub repo via the GitHub API.
  *
- * Usage: node scripts/backup-posts.mjs
+ * Requires: GITHUB_TOKEN in .env
+ * Usage: node --env-file=.env scripts/backup-posts.mjs
  */
 
-import { execSync } from "child_process";
-import { mkdirSync, writeFileSync, existsSync } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+const STRAPI_PORT = process.env.PORT ?? 1337;
+const STRAPI_API_URL = `http://127.0.0.1:${STRAPI_PORT}/api`;
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_OWNER = "sonicakes";
+const GITHUB_REPO = "cinefile-content";
+const GITHUB_API = "https://api.github.com";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+if (!GITHUB_TOKEN) {
+  console.error("GITHUB_TOKEN is not set. Add it to your .env file.");
+  process.exit(1);
+}
 
-const STRAPI_API_URL = "http://127.0.0.1:1337/api";
-const CONTENT_REPO_URL = "https://github.com/sonicakes/cinefile-content.git";
-const CLONE_DIR = join(__dirname, "../.content-backup-tmp");
+// ---------------------------------------------------------------------------
+// GitHub API helpers
+// ---------------------------------------------------------------------------
+async function githubRequest(method, path, body) {
+  const res = await fetch(`${GITHUB_API}${path}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  if (!res.ok && res.status !== 404) {
+    const text = await res.text();
+    throw new Error(`GitHub API ${method} ${path} failed ${res.status}: ${text}`);
+  }
+
+  return res.status === 404 ? null : res.json();
+}
+
+// Get current file SHA (needed to update an existing file)
+async function getFileSha(filePath) {
+  const data = await githubRequest("GET", `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`);
+  return data?.sha ?? null;
+}
+
+// Create or update a file in the repo
+async function upsertFile(filePath, content, message) {
+  const sha = await getFileSha(filePath);
+  const encoded = Buffer.from(content, "utf-8").toString("base64");
+
+  await githubRequest("PUT", `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`, {
+    message,
+    content: encoded,
+    ...(sha ? { sha } : {}),
+  });
+}
 
 // ---------------------------------------------------------------------------
 // Fetch all movies from Strapi
@@ -68,21 +111,12 @@ function toMarkdown(movie) {
       if (v === null || v === undefined) return `${k}: null`;
       if (typeof v === "string") return `${k}: "${v.replace(/"/g, '\\"')}"`;
       if (typeof v === "boolean" || typeof v === "number") return `${k}: ${v}`;
-      // arrays/objects — JSON inline
       return `${k}: ${JSON.stringify(v)}`;
     })
     .join("\n");
 
   const body = movie.body_blog ?? "";
-
   return `---\n${frontmatter}\n---\n\n${body}\n`;
-}
-
-// ---------------------------------------------------------------------------
-// Derive a stable filename from documentId so renames don't create duplicates
-// ---------------------------------------------------------------------------
-function toFilename(movie) {
-  return `${movie.documentId}.md`;
 }
 
 // ---------------------------------------------------------------------------
@@ -95,69 +129,32 @@ function toReadme(movies, timestamp) {
     .map((m) => `| ${m.title} | ${m.director} | ${m.year} | [${m.documentId}.md](posts/${m.documentId}.md) |`)
     .join("\n");
 
-  return `# Cinefile Content Backup
-
-Last updated: ${timestamp} — ${movies.length} posts
-
-| Title | Director | Year | File |
-|---|---|---|---|
-${rows}
-`;
-}
-
-// ---------------------------------------------------------------------------
-// Git helpers — run commands inside the cloned repo
-// ---------------------------------------------------------------------------
-function git(cmd) {
-  execSync(`git ${cmd}`, { cwd: CLONE_DIR, stdio: "inherit" });
+  return `# Cinefile Content Backup\n\nLast updated: ${timestamp} — ${movies.length} posts\n\n| Title | Director | Year | File |\n|---|---|---|---|\n${rows}\n`;
 }
 
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 async function main() {
-  // 1. Fetch posts
   const movies = await fetchAllMovies();
   console.log(`Found ${movies.length} movies.`);
 
-  // 2. Clone or pull the content repo into a temp directory
-  if (existsSync(CLONE_DIR)) {
-    console.log("Updating existing content repo clone...");
-    git("pull --ff-only");
-  } else {
-    console.log("Cloning content repo...");
-    execSync(`git clone ${CONTENT_REPO_URL} "${CLONE_DIR}"`, { stdio: "inherit" });
-  }
-
-  // 3. Write markdown files
-  const postsDir = join(CLONE_DIR, "posts");
-  mkdirSync(postsDir, { recursive: true });
-
-  for (const movie of movies) {
-    const filename = toFilename(movie);
-    const content = toMarkdown(movie);
-    writeFileSync(join(postsDir, filename), content, "utf-8");
-    console.log(`  Written: posts/${filename}`);
-  }
-
-  // 4. Write README index
   const timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
-  writeFileSync(join(CLONE_DIR, "README.md"), toReadme(movies, timestamp), "utf-8");
+  const commitMessage = `backup: ${timestamp} (${movies.length} posts)`;
 
-  // 5. Commit and push
-  git("add .");
-
-  // Check if there's anything to commit
-  const status = execSync("git status --porcelain", { cwd: CLONE_DIR }).toString().trim();
-  if (!status) {
-    console.log("No changes to commit — content is already up to date.");
-    return;
+  // Upload each post file
+  for (const movie of movies) {
+    const filePath = `posts/${movie.documentId}.md`;
+    const content = toMarkdown(movie);
+    console.log(`  Upserting ${filePath}...`);
+    await upsertFile(filePath, content, commitMessage);
   }
 
-  git(`commit -m "backup: ${timestamp} (${movies.length} posts)"`);
-  git("push");
+  // Upload README index
+  console.log("  Upserting README.md...");
+  await upsertFile("README.md", toReadme(movies, timestamp), commitMessage);
 
-  console.log(`\nDone! ${movies.length} posts backed up and pushed to cinefile-content.`);
+  console.log(`\nDone! ${movies.length} posts backed up to cinefile-content.`);
 }
 
 main().catch((err) => {
