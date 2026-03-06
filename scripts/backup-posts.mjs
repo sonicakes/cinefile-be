@@ -136,6 +136,8 @@ function toReadme(movies, timestamp) {
 // Main
 // ---------------------------------------------------------------------------
 async function main() {
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
   const movies = await fetchAllMovies();
   console.log(`Found ${movies.length} movies.`);
 
