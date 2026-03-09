@@ -24,6 +24,28 @@ export interface SharedAvailabilityItem extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedFavouriteMovies extends Struct.ComponentSchema {
+  collectionName: 'components_shared_favourite_movies';
+  info: {
+    displayName: 'favourite_movies';
+  };
+  attributes: {
+    title: Schema.Attribute.String;
+    year: Schema.Attribute.String;
+  };
+}
+
+export interface SharedFavouritePodcasts extends Struct.ComponentSchema {
+  collectionName: 'components_shared_favourite_podcasts';
+  info: {
+    displayName: 'favourite_podcasts';
+  };
+  attributes: {
+    link: Schema.Attribute.String;
+    name: Schema.Attribute.String;
+  };
+}
+
 export interface SharedNextMovie extends Struct.ComponentSchema {
   collectionName: 'components_shared_next_movies';
   info: {
@@ -50,6 +72,8 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'shared.availability-item': SharedAvailabilityItem;
+      'shared.favourite-movies': SharedFavouriteMovies;
+      'shared.favourite-podcasts': SharedFavouritePodcasts;
       'shared.next-movie': SharedNextMovie;
       'shared.spotify-eps': SharedSpotifyEps;
     }

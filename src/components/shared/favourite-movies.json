@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_shared_favourite_movies",
+  "info": {
+    "displayName": "favourite_movies"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "year": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

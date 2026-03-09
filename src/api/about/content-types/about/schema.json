@@ -1,0 +1,41 @@
+{
+  "kind": "singleType",
+  "collectionName": "abouts",
+  "info": {
+    "singularName": "about",
+    "pluralName": "abouts",
+    "displayName": "About"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "portrait": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "portrait_caption": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "richtext"
+    },
+    "favourite_movies": {
+      "type": "component",
+      "component": "shared.favourite-movies",
+      "repeatable": true
+    },
+    "favourite_podcasts": {
+      "type": "component",
+      "component": "shared.favourite-podcasts",
+      "repeatable": true
+    }
+  }
+}

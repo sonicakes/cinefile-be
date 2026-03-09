@@ -430,6 +430,41 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAboutAbout extends Struct.SingleTypeSchema {
+  collectionName: 'abouts';
+  info: {
+    displayName: 'About';
+    pluralName: 'abouts';
+    singularName: 'about';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    bio: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    favourite_movies: Schema.Attribute.Component<
+      'shared.favourite-movies',
+      true
+    >;
+    favourite_podcasts: Schema.Attribute.Component<
+      'shared.favourite-podcasts',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::about.about'> &
+      Schema.Attribute.Private;
+    portrait: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    portrait_caption: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiGenreGenre extends Struct.CollectionTypeSchema {
   collectionName: 'genres';
   info: {
@@ -1055,6 +1090,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::about.about': ApiAboutAbout;
       'api::genre.genre': ApiGenreGenre;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::movie.movie': ApiMovieMovie;
