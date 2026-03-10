@@ -442,9 +442,12 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
   };
   attributes: {
     bio: Schema.Attribute.RichText;
+    byline: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    director: Schema.Attribute.String;
+    excerpt: Schema.Attribute.Text;
     favourite_movies: Schema.Attribute.Component<
       'shared.favourite-movies',
       true
@@ -453,15 +456,30 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
       'shared.favourite-podcasts',
       true
     >;
+    genres: Schema.Attribute.Relation<'oneToMany', 'api::genre.genre'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::about.about'> &
       Schema.Attribute.Private;
+    page_title: Schema.Attribute.String;
     portrait: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     portrait_caption: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    rating: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      >;
+    rating_metric: Schema.Attribute.String;
+    run_time: Schema.Attribute.String;
+    title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    would_recommend: Schema.Attribute.Boolean;
+    would_rewatch: Schema.Attribute.Boolean;
   };
 }
 
