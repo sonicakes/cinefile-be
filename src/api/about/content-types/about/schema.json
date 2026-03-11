@@ -73,6 +73,14 @@
     },
     "byline": {
       "type": "string"
+    },
+    "availability": {
+      "type": "component",
+      "component": "shared.availability-item",
+      "repeatable": true
+    },
+    "year": {
+      "type": "string"
     }
   }
 }

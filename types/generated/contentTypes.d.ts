@@ -441,6 +441,7 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    availability: Schema.Attribute.Component<'shared.availability-item', true>;
     bio: Schema.Attribute.RichText;
     byline: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
@@ -480,6 +481,7 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     would_recommend: Schema.Attribute.Boolean;
     would_rewatch: Schema.Attribute.Boolean;
+    year: Schema.Attribute.String;
   };
 }
 

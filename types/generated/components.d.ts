@@ -19,6 +19,8 @@ export interface SharedAvailabilityItem extends Struct.ComponentSchema {
         'DVD',
         'Home',
         'TV',
+        'University',
+        'Work',
       ]
     >;
   };
