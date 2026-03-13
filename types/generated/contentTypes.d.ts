@@ -430,6 +430,61 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAboutAbout extends Struct.SingleTypeSchema {
+  collectionName: 'abouts';
+  info: {
+    displayName: 'About';
+    pluralName: 'abouts';
+    singularName: 'about';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    availability: Schema.Attribute.Component<'shared.availability-item', true>;
+    bio: Schema.Attribute.RichText;
+    byline: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    director: Schema.Attribute.String;
+    excerpt: Schema.Attribute.Text;
+    favourite_movies: Schema.Attribute.Component<
+      'shared.favourite-movies',
+      true
+    >;
+    favourite_podcasts: Schema.Attribute.Component<
+      'shared.favourite-podcasts',
+      true
+    >;
+    genres: Schema.Attribute.Relation<'oneToMany', 'api::genre.genre'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::about.about'> &
+      Schema.Attribute.Private;
+    page_title: Schema.Attribute.String;
+    portrait: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    portrait_caption: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    rating: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      >;
+    rating_metric: Schema.Attribute.String;
+    run_time: Schema.Attribute.String;
+    title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    would_recommend: Schema.Attribute.Boolean;
+    would_rewatch: Schema.Attribute.Boolean;
+    year: Schema.Attribute.String;
+  };
+}
+
 export interface ApiGenreGenre extends Struct.CollectionTypeSchema {
   collectionName: 'genres';
   info: {
@@ -449,6 +504,42 @@ export interface ApiGenreGenre extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
+  collectionName: 'homepages';
+  info: {
+    displayName: 'Homepage';
+    pluralName: 'homepages';
+    singularName: 'homepage';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    body_paragraph_1: Schema.Attribute.Text;
+    body_paragraph_2: Schema.Attribute.Text;
+    byline: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    front_page_caption: Schema.Attribute.String;
+    front_page_image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios'
+    >;
+    headline: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::homepage.homepage'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    sidebar_movies: Schema.Attribute.Relation<'oneToMany', 'api::movie.movie'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -475,6 +566,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     date_watched: Schema.Attribute.Date;
     director: Schema.Attribute.String;
     excerpt: Schema.Attribute.Text;
+    further_reading: Schema.Attribute.Component<'shared.further-reading', true>;
     genres: Schema.Attribute.Relation<'oneToMany', 'api::genre.genre'>;
     image_description: Schema.Attribute.String;
     img: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
@@ -497,6 +589,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     rating_metric: Schema.Attribute.String;
     review_provided: Schema.Attribute.Boolean;
     run_time: Schema.Attribute.String;
+    sims_scenario: Schema.Attribute.Component<'shared.sims-scenario', true>;
     spotify_episodes: Schema.Attribute.Component<'shared.spotify-eps', true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -1019,7 +1112,9 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::about.about': ApiAboutAbout;
       'api::genre.genre': ApiGenreGenre;
+      'api::homepage.homepage': ApiHomepageHomepage;
       'api::movie.movie': ApiMovieMovie;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

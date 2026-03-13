@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_shared_favourite_podcasts",
+  "info": {
+    "displayName": "favourite_podcasts"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "link": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

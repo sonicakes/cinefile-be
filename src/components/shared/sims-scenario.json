@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_sims_scenario",
+  "info": {
+    "displayName": "sims_scenario"
+  },
+  "options": {},
+  "attributes": {
+    "scenarioName": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "url": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

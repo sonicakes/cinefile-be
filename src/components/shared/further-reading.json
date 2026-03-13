@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_further_reading",
+  "info": {
+    "displayName": "further_reading"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}
