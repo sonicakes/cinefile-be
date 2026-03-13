@@ -92,6 +92,16 @@
       "component": "shared.spotify-eps",
       "repeatable": true
     },
+    "further_reading": {
+      "type": "component",
+      "component": "shared.further-reading",
+      "repeatable": true
+    },
+    "sims_scenario": {
+      "type": "component",
+      "component": "shared.sims-scenario",
+      "repeatable": true
+    },
     "date_watched": {
       "type": "date"
     }

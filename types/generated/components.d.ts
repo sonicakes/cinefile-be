@@ -48,6 +48,18 @@ export interface SharedFavouritePodcasts extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedFurtherReading extends Struct.ComponentSchema {
+  collectionName: 'components_shared_further_reading';
+  info: {
+    displayName: 'further_reading';
+  };
+  attributes: {
+    author: Schema.Attribute.String;
+    title: Schema.Attribute.String;
+    url: Schema.Attribute.String;
+  };
+}
+
 export interface SharedNextMovie extends Struct.ComponentSchema {
   collectionName: 'components_shared_next_movies';
   info: {
@@ -55,6 +67,18 @@ export interface SharedNextMovie extends Struct.ComponentSchema {
   };
   attributes: {
     movie: Schema.Attribute.Relation<'oneToOne', 'api::movie.movie'>;
+  };
+}
+
+export interface SharedSimsScenario extends Struct.ComponentSchema {
+  collectionName: 'components_shared_sims_scenario';
+  info: {
+    displayName: 'sims_scenario';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    scenarioName: Schema.Attribute.String;
+    url: Schema.Attribute.String;
   };
 }
 
@@ -76,7 +100,9 @@ declare module '@strapi/strapi' {
       'shared.availability-item': SharedAvailabilityItem;
       'shared.favourite-movies': SharedFavouriteMovies;
       'shared.favourite-podcasts': SharedFavouritePodcasts;
+      'shared.further-reading': SharedFurtherReading;
       'shared.next-movie': SharedNextMovie;
+      'shared.sims-scenario': SharedSimsScenario;
       'shared.spotify-eps': SharedSpotifyEps;
     }
   }

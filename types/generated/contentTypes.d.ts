@@ -566,6 +566,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     date_watched: Schema.Attribute.Date;
     director: Schema.Attribute.String;
     excerpt: Schema.Attribute.Text;
+    further_reading: Schema.Attribute.Component<'shared.further-reading', true>;
     genres: Schema.Attribute.Relation<'oneToMany', 'api::genre.genre'>;
     image_description: Schema.Attribute.String;
     img: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
@@ -588,6 +589,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     rating_metric: Schema.Attribute.String;
     review_provided: Schema.Attribute.Boolean;
     run_time: Schema.Attribute.String;
+    sims_scenario: Schema.Attribute.Component<'shared.sims-scenario', true>;
     spotify_episodes: Schema.Attribute.Component<'shared.spotify-eps', true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
