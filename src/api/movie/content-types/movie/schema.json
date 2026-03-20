@@ -104,6 +104,9 @@
     },
     "date_watched": {
       "type": "date"
+    },
+    "times_watched": {
+      "type": "integer"
     }
   }
 }

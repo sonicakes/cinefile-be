@@ -591,6 +591,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     run_time: Schema.Attribute.String;
     sims_scenario: Schema.Attribute.Component<'shared.sims-scenario', true>;
     spotify_episodes: Schema.Attribute.Component<'shared.spotify-eps', true>;
+    times_watched: Schema.Attribute.Integer;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
