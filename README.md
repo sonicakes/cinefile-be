@@ -19,6 +19,7 @@ Headless CMS backend for a movie/cinema review platform. Content editors manage 
 | Type | Kind | Notes |
 |---|---|---|
 | `movie` | Collection | Core entity; triggers GitHub backup on save |
+| `post` | Collection | Non-review writing (news, podcasts, updates); triggers GitHub backup on save |
 | `genre` | Collection | Shared lookup; related to `movie` and `about` |
 | `homepage` | Single | Curated front page content |
 | `about` | Single | Bio/profile page |
@@ -28,9 +29,9 @@ Headless CMS backend for a movie/cinema review platform. Content editors manage 
 | Component | Used on |
 |---|---|
 | `availability-item` | `movie`, `about` |
-| `further-reading` | `movie` |
+| `further-reading` | `movie`, `post` |
 | `sims-scenario` | `movie` |
-| `spotify-eps` | `movie` |
+| `spotify-eps` | `movie`, `post` |
 | `next-movie` | `movie` |
 | `favourite-movies` | `about` |
 | `favourite-podcasts` | `about` |
@@ -100,13 +101,14 @@ Optional or variable-length content is modelled as repeatable components rather 
 
 ### Lifecycle Hook — GitHub Backup
 
-When a `movie` entry is created or updated, a lifecycle hook in `src/api/movie/content-types/movie/lifecycles.ts` spawns a detached child process running `scripts/backup-posts.mjs`. The script fetches all published movies via the REST API, converts them to Markdown with YAML frontmatter, and pushes them to the `sonicakes/cinefile-content` GitHub repository. Running it as a detached process means it never blocks the API response.
+When a `movie` or `post` entry is created or updated, a lifecycle hook spawns a detached child process running `scripts/backup-posts.mjs`. The script fetches all published movies and posts via the REST API, converts them to Markdown with YAML frontmatter, and pushes them to the `sonicakes/cinefile-content` GitHub repository. Running it as a detached process means it never blocks the API response.
 
 ```
-[Strapi saves Movie]
+[Strapi saves Movie or Post]
   -> lifecycles.ts: afterCreate / afterUpdate
   -> spawn detached: node scripts/backup-posts.mjs
-  -> fetch all movies (populate=*)
+  -> fetch all movies (populate=*) → movies/<documentId>.md
+  -> fetch all posts  (populate=*) → posts/<documentId>.md
   -> convert to Markdown + YAML frontmatter
   -> push to GitHub: sonicakes/cinefile-content
 ```
@@ -116,7 +118,7 @@ Backup output is logged to `backup.log` in the project root.
 ## Key Directories
 
 ```
-src/api/             # Content types: movie, genre, homepage, about
+src/api/             # Content types: movie, post, genre, homepage, about
 src/components/      # Reusable schema components (shared/)
 src/extensions/      # Strapi extension point
 config/              # Server, database, admin, middleware, plugins, API config
