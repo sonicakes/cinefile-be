@@ -36,10 +36,10 @@
     "front_page_caption": {
       "type": "string"
     },
-    "sidebar_movies": {
+    "sidebar_posts": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::movie.movie"
+      "target": "api::post.post"
     }
   }
 }

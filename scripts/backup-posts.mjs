@@ -77,6 +77,20 @@ async function fetchAllMovies() {
 }
 
 // ---------------------------------------------------------------------------
+// Fetch all posts from Strapi
+// ---------------------------------------------------------------------------
+async function fetchAllPosts() {
+  const url = `${STRAPI_API_URL}/posts?populate=*&pagination[pageSize]=100`;
+  console.log(`Fetching posts from ${url}...`);
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Strapi request failed: ${res.status} ${res.statusText}`);
+
+  const json = await res.json();
+  return json.data ?? [];
+}
+
+// ---------------------------------------------------------------------------
 // Convert a Strapi movie record to a Markdown file string
 // ---------------------------------------------------------------------------
 function toMarkdown(movie) {
@@ -120,16 +134,52 @@ function toMarkdown(movie) {
 }
 
 // ---------------------------------------------------------------------------
-// Generate a README index of all posts
+// Convert a Strapi post record to a Markdown file string
 // ---------------------------------------------------------------------------
-function toReadme(movies, timestamp) {
-  const rows = movies
-    .slice()
-    .sort((a, b) => a.title.localeCompare(b.title))
-    .map((m) => `| ${m.title} | ${m.director} | ${m.year} | [${m.documentId}.md](posts/${m.documentId}.md) |`)
+function toPostMarkdown(post) {
+  const fm = {
+    id: post.id,
+    documentId: post.documentId,
+    title: post.title,
+    date: post.date ?? null,
+    meta_title: post.meta_title ?? null,
+    excerpt: post.excerpt ?? null,
+    image_description: post.image_description ?? null,
+    further_reading: post.further_reading ?? [],
+    spotify_episodes: post.spotify_episodes ?? [],
+    img_url: post.img?.url ?? null,
+  };
+
+  const frontmatter = Object.entries(fm)
+    .map(([k, v]) => {
+      if (v === null || v === undefined) return `${k}: null`;
+      if (typeof v === "string") return `${k}: "${v.replace(/"/g, '\\"')}"`;
+      if (typeof v === "boolean" || typeof v === "number") return `${k}: ${v}`;
+      return `${k}: ${JSON.stringify(v)}`;
+    })
     .join("\n");
 
-  return `# Cinefile Content Backup\n\nLast updated: ${timestamp} — ${movies.length} posts\n\n| Title | Director | Year | File |\n|---|---|---|---|\n${rows}\n`;
+  const body = post.body_blog ?? "";
+  return `---\n${frontmatter}\n---\n\n${body}\n`;
+}
+
+// ---------------------------------------------------------------------------
+// Generate a README index of all posts
+// ---------------------------------------------------------------------------
+function toReadme(movies, posts, timestamp) {
+  const movieRows = movies
+    .slice()
+    .sort((a, b) => a.title.localeCompare(b.title))
+    .map((m) => `| ${m.title} | ${m.director} | ${m.year} | [${m.documentId}.md](movies/${m.documentId}.md) |`)
+    .join("\n");
+
+  const postRows = posts
+    .slice()
+    .sort((a, b) => a.title.localeCompare(b.title))
+    .map((p) => `| ${p.title} | ${p.date ?? ""} | [${p.documentId}.md](posts/${p.documentId}.md) |`)
+    .join("\n");
+
+  return `# Cinefile Content Backup\n\nLast updated: ${timestamp} — ${movies.length} movies, ${posts.length} posts\n\n## Movies\n\n| Title | Director | Year | File |\n|---|---|---|---|\n${movieRows}\n\n## Posts\n\n| Title | Date | File |\n|---|---|---|\n${postRows}\n`;
 }
 
 // ---------------------------------------------------------------------------
@@ -138,25 +188,33 @@ function toReadme(movies, timestamp) {
 async function main() {
   await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  const movies = await fetchAllMovies();
-  console.log(`Found ${movies.length} movies.`);
+  const [movies, posts] = await Promise.all([fetchAllMovies(), fetchAllPosts()]);
+  console.log(`Found ${movies.length} movies, ${posts.length} posts.`);
 
   const timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
-  const commitMessage = `backup: ${timestamp} (${movies.length} posts)`;
+  const commitMessage = `backup: ${timestamp} (${movies.length} movies, ${posts.length} posts)`;
+
+  // Upload each movie file
+  for (const movie of movies) {
+    const filePath = `movies/${movie.documentId}.md`;
+    const content = toMarkdown(movie);
+    console.log(`  Upserting ${filePath}...`);
+    await upsertFile(filePath, content, commitMessage);
+  }
 
   // Upload each post file
-  for (const movie of movies) {
-    const filePath = `posts/${movie.documentId}.md`;
-    const content = toMarkdown(movie);
+  for (const post of posts) {
+    const filePath = `posts/${post.documentId}.md`;
+    const content = toPostMarkdown(post);
     console.log(`  Upserting ${filePath}...`);
     await upsertFile(filePath, content, commitMessage);
   }
 
   // Upload README index
   console.log("  Upserting README.md...");
-  await upsertFile("README.md", toReadme(movies, timestamp), commitMessage);
+  await upsertFile("README.md", toReadme(movies, posts, timestamp), commitMessage);
 
-  console.log(`\nDone! ${movies.length} posts backed up to cinefile-content.`);
+  console.log(`\nDone! ${movies.length} movies and ${posts.length} posts backed up to cinefile-content.`);
 }
 
 main().catch((err) => {

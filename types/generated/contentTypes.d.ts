@@ -539,7 +539,7 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    sidebar_movies: Schema.Attribute.Relation<'oneToMany', 'api::movie.movie'>;
+    sidebar_posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -591,6 +591,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     run_time: Schema.Attribute.String;
     sims_scenario: Schema.Attribute.Component<'shared.sims-scenario', true>;
     spotify_episodes: Schema.Attribute.Component<'shared.spotify-eps', true>;
+    times_watched: Schema.Attribute.Integer;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -598,6 +599,39 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     would_recommend: Schema.Attribute.Boolean;
     would_rewatch: Schema.Attribute.Boolean;
     year: Schema.Attribute.String;
+  };
+}
+
+export interface ApiPostPost extends Struct.CollectionTypeSchema {
+  collectionName: 'posts';
+  info: {
+    displayName: 'post';
+    pluralName: 'posts';
+    singularName: 'post';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    body_blog: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    excerpt: Schema.Attribute.Text;
+    further_reading: Schema.Attribute.Component<'shared.further-reading', true>;
+    image_description: Schema.Attribute.String;
+    img: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::post.post'> &
+      Schema.Attribute.Private;
+    meta_title: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    spotify_episodes: Schema.Attribute.Component<'shared.spotify-eps', true>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1116,6 +1150,7 @@ declare module '@strapi/strapi' {
       'api::genre.genre': ApiGenreGenre;
       'api::homepage.homepage': ApiHomepageHomepage;
       'api::movie.movie': ApiMovieMovie;
+      'api::post.post': ApiPostPost;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

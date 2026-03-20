@@ -1,61 +1,129 @@
-# 🚀 Getting started with Strapi
+# Cinefile-BE
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
+Headless CMS backend for a movie/cinema review platform. Content editors manage reviews through Strapi's admin UI; published content is automatically backed up to a GitHub repository as Markdown files.
 
-### `develop`
+## Tech Stack
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)
+| Layer | Technology |
+|---|---|
+| Framework | Strapi 5.38.0 |
+| Language | TypeScript 5.x |
+| Runtime | Node.js >= 20.0.0 |
+| Database (prod) | PostgreSQL via Neon (connection pooling, SSL) |
+| Database (local) | PostgreSQL (local instance, `DATABASE_URL`) |
+| Media storage | Cloudinary |
+| Auth | `@strapi/plugin-users-permissions` |
 
+## Content Types
+
+| Type | Kind | Notes |
+|---|---|---|
+| `movie` | Collection | Core entity; triggers GitHub backup on save |
+| `post` | Collection | Non-review writing (news, podcasts, updates); triggers GitHub backup on save |
+| `genre` | Collection | Shared lookup; related to `movie` and `about` |
+| `homepage` | Single | Curated front page content |
+| `about` | Single | Bio/profile page |
+
+### Shared Components (`src/components/shared/`)
+
+| Component | Used on |
+|---|---|
+| `availability-item` | `movie`, `about` |
+| `further-reading` | `movie`, `post` |
+| `sims-scenario` | `movie` |
+| `spotify-eps` | `movie`, `post` |
+| `next-movie` | `movie` |
+| `favourite-movies` | `about` |
+| `favourite-podcasts` | `about` |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 20.0.0
+- A running PostgreSQL instance (local or remote)
+- A Cloudinary account
+- A GitHub personal access token (for content backup)
+
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+APP_KEYS=
+ADMIN_JWT_SECRET=
+API_TOKEN_SALT=
+TRANSFER_TOKEN_SALT=
+ENCRYPTION_KEY=
+
+DATABASE_URL=               # PostgreSQL connection string — required locally and in prod
+
+CLOUDINARY_NAME=
+CLOUDINARY_KEY=
+CLOUDINARY_SECRET=
+
+GITHUB_TOKEN=               # Personal access token for automated Markdown backup
 ```
+
+> Always set `DATABASE_URL` even in local development to keep the environment consistent with production.
+
+### Install & Run
+
+```bash
+npm install
 npm run develop
-# or
-yarn develop
 ```
 
-### `start`
+The admin panel is available at `http://localhost:1337/admin`.
 
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-start)
+## Commands
+
+| Command | Description |
+|---|---|
+| `npm run develop` | Dev server with auto-reload |
+| `npm run build` | Compile TypeScript and rebuild admin panel |
+| `npm run start` | Production start (no auto-reload) |
+| `npm run backup` | Manually trigger the GitHub backup script |
+| `npm run console` | Interactive Strapi REPL |
+| `npm run deploy` | Deploy to Strapi Cloud |
+
+> After any schema change (new field, component, or relation), run `npm run build` to regenerate `types/generated/`.
+
+## Architecture
+
+### Factory Pattern
+
+Routes, controllers, and services are thin wrappers using Strapi's factory functions. Custom logic is added only when explicitly required, keeping the core files predictable and consistent across all content types.
+
+### Component Model
+
+Optional or variable-length content is modelled as repeatable components rather than fields directly on the content type. This keeps schemas clean and gives editors flexibility without requiring a code change.
+
+### Lifecycle Hook — GitHub Backup
+
+When a `movie` or `post` entry is created or updated, a lifecycle hook spawns a detached child process running `scripts/backup-posts.mjs`. The script fetches all published movies and posts via the REST API, converts them to Markdown with YAML frontmatter, and pushes them to the `sonicakes/cinefile-content` GitHub repository. Running it as a detached process means it never blocks the API response.
 
 ```
-npm run start
-# or
-yarn start
+[Strapi saves Movie or Post]
+  -> lifecycles.ts: afterCreate / afterUpdate
+  -> spawn detached: node scripts/backup-posts.mjs
+  -> fetch all movies (populate=*) → movies/<documentId>.md
+  -> fetch all posts  (populate=*) → posts/<documentId>.md
+  -> convert to Markdown + YAML frontmatter
+  -> push to GitHub: sonicakes/cinefile-content
 ```
 
-### `build`
+Backup output is logged to `backup.log` in the project root.
 
-Build your admin panel. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-build)
-
-```
-npm run build
-# or
-yarn build
-```
-
-## ⚙️ Deployment
-
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
+## Key Directories
 
 ```
-yarn strapi deploy
+src/api/             # Content types: movie, post, genre, homepage, about
+src/components/      # Reusable schema components (shared/)
+src/extensions/      # Strapi extension point
+config/              # Server, database, admin, middleware, plugins, API config
+scripts/             # backup-posts.mjs — GitHub backup script
+types/generated/     # Auto-generated TS types — do not edit manually
+database/            # Strapi migrations
+dist/                # Compiled output — do not edit
 ```
-
-## 📚 Learn more
-
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://strapi.io/blog) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
-
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
-
-## ✨ Community
-
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
-
----
-
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>

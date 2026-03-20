@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "posts",
+  "info": {
+    "singularName": "post",
+    "pluralName": "posts",
+    "displayName": "post"
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "title":             { "type": "string", "required": true },
+    "date":              { "type": "date" },
+    "meta_title":        { "type": "string" },
+    "body_blog":         { "type": "richtext" },
+    "excerpt":           { "type": "text" },
+    "img":               { "type": "media", "multiple": false, "allowedTypes": ["images", "files", "videos", "audios"] },
+    "image_description": { "type": "string" },
+    "further_reading":   { "type": "component", "component": "shared.further-reading", "repeatable": true },
+    "spotify_episodes":  { "type": "component", "component": "shared.spotify-eps",    "repeatable": true }
+  }
+}
