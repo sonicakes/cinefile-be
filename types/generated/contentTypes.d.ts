@@ -587,6 +587,7 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
     review_provided: Schema.Attribute.Boolean;
     run_time: Schema.Attribute.String;
     sims_scenario: Schema.Attribute.Component<'shared.sims-scenario', true>;
+    slug: Schema.Attribute.UID<'title'>;
     spotify_episodes: Schema.Attribute.Component<'shared.spotify-eps', true>;
     times_watched: Schema.Attribute.Integer;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -624,6 +625,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     meta_title: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'title'>;
     spotify_episodes: Schema.Attribute.Component<'shared.spotify-eps', true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
