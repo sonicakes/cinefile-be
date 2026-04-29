@@ -107,6 +107,10 @@
     },
     "times_watched": {
       "type": "integer"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
     }
   }
 }
